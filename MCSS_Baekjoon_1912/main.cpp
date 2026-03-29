@@ -4,7 +4,7 @@
 #define inf 1001
 
 int Input();
-int Mcss1(int* a, int n);
+int Mcss2(int* a, int n);
 
 int main()
 {
@@ -19,7 +19,7 @@ int main()
 		Data[i] = Input();
 	}
 
-	int MaxSum = Mcss1(Data, AllDataSize);
+	int MaxSum = Mcss2(Data, AllDataSize);
 
 	std::cout << MaxSum << std::endl;
 
@@ -35,18 +35,15 @@ int Input()
 	return InputNumber;
 }
 
-int Mcss1(int* a, int n)
+int Mcss2(int* a, int n)
 {
 	int MaxSum = -inf;
 	for (int i = 0; i < n; i++)
 	{
+		int Sum = 0;
 		for (int j = i ; j < n ; j++)
 		{
-			int Sum = 0;
-			for (int k = i; k <= j; k++)
-			{
-				Sum += a[k];
-			}
+			Sum += a[j];
 			if (Sum > MaxSum)
 			{
 				MaxSum = Sum;
@@ -57,16 +54,16 @@ int Mcss1(int* a, int n)
 }
 
 //의사코드
-//Mcss1(a, n)
-//MaxSum = -inf;
+//mcss2(a, n)
+//max_sum = -∞
 //for i = 0, ..., n - 1
+////시작점이 i인 경우의 최대 연속합 구하기
+//sum = 0
 //for j = i, ..., n - 1
-//Sum = 0
-//for k = i, ..., j
-//Sum += a[j];
-//if (Sum > MaxSum)
-//MaxSum = Sum;
-//return MaxSum;
+//sum += a[j]
+//if (sum > max_sum)
+//max_sum = sum
+//return max_sum
 
 //시간복잡도
-//O(n^3)
+//O(n^2)
