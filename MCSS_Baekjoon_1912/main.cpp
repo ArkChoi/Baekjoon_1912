@@ -1,10 +1,12 @@
 //Baekjoon 1912 
-//Brute Force
+//Merge Sort
 #include <iostream>
 #define inf 1001
 
 int Input();
-int Mcss2(int* a, int n);
+int Mcss3(int* a, int low, int high);
+int CrossSum(int* a, int low, int mid, int high);
+int Max(int InLeftSum, int InRightSum, int InTwoSidedSum);
 
 int main()
 {
@@ -19,7 +21,7 @@ int main()
 		Data[i] = Input();
 	}
 
-	int MaxSum = Mcss2(Data, AllDataSize);
+	int MaxSum = Mcss3(Data, 0, (AllDataSize - 1) );
 
 	std::cout << MaxSum << std::endl;
 
@@ -35,35 +37,89 @@ int Input()
 	return InputNumber;
 }
 
-int Mcss2(int* a, int n)
+int Mcss3(int* a, int low, int high)
 {
-	int MaxSum = -inf;
-	for (int i = 0; i < n; i++)
+	if (low == high)
 	{
-		int Sum = 0;
-		for (int j = i ; j < n ; j++)
+		return a[low];
+	}
+
+	int mid = (low + high) / 2;
+
+	int LeftSum = Mcss3(a, low, mid);
+	int RightSum = Mcss3(a, mid + 1, high);
+	int TwoSidedSum = CrossSum(a, low, mid, high);
+	return Max(LeftSum, RightSum, TwoSidedSum);
+}
+
+int CrossSum(int* a, int low, int mid, int high)
+{
+	int LSum = -inf;
+	int RSum = -inf;
+	int Sum = 0;
+
+	for (int i = mid ; i >= low; i--)
+	{
+		Sum += a[i];
+		if (Sum > LSum)
 		{
-			Sum += a[j];
-			if (Sum > MaxSum)
-			{
-				MaxSum = Sum;
-			}
+			LSum = Sum;
 		}
 	}
+
+	Sum = 0;
+
+	for (int i = mid + 1; i <= high; i++)
+	{
+		Sum += a[i];
+		if (Sum > RSum)
+		{
+			RSum = Sum;
+		}
+	}
+
+	return LSum + RSum;
+}
+
+int Max(int InLeftSum, int InRightSum, int InTwoSidedSum)
+{
+	int MaxSum = -inf;
+
+	if (InLeftSum > MaxSum)
+	{
+		MaxSum = InLeftSum;
+	}
+	if (InRightSum > MaxSum)
+	{
+		MaxSum = InRightSum;
+	}
+	if (InTwoSidedSum > MaxSum)
+	{
+		MaxSum = InTwoSidedSum;
+	}
+
 	return MaxSum;
 }
 
 //의사코드
-//mcss2(a, n)
-//max_sum = -∞
-//for i = 0, ..., n - 1
-////시작점이 i인 경우의 최대 연속합 구하기
-//sum = 0
-//for j = i, ..., n - 1
-//sum += a[j]
-//if (sum > max_sum)
-//max_sum = sum
-//return max_sum
+//MCSS3(a, low, high)
+//if (low == high) return a[low]
+//mid = (low, hgih) / 2
+//left_sum = MCSS3(a, low, mid)
+//right_sum = MCSS3(a, mid + 1, high)
+//tow_sided_sum = cross_sum(a, low, mid, high)
+//return Max(left_sum, right_sum, tow_sided_sum)
+//
+//cross_sum(a, low, mid, high)
+//lsum = sum = a[mid]
+//for i = mid - 1, mid - 2, ..., low
+//sum += a[i]
+//if (sum > lsum) lsum = sum
+//rsum = sum = a[mid + 1]
+//for i = mid + 2, mid + 3, ..., hgih
+//sum += a[i]
+//if (sum > rsum) rsum = sum
+//return lsum + rsum
 
 //시간복잡도
-//O(n^2)
+//O(n log n)
